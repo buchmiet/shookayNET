@@ -1,7 +1,7 @@
-# **Shookay Search Engine NET wrapper v0.5.0**
+# **Shookay Search Engine NET wrapper v0.5.1**
 
 ## **Overview**
-ShookayNET is net wrapper for Shookay engine. Shookay is a open source versatile, high-performance search engine library designed to offer efficient and dynamic search capabilities. Shookay NET enables you tyou use shookay with NET objects.
+ShookayNET is net wrapper for Shookay engine. Shookay is a open source versatile, high-performance search engine library designed to offer efficient and dynamic search capabilities. Shookay NET enables you tyou use shookay with NET objects. It can be used for web api where results need to be provided instantly or it can provide results on the go.
 
 ## **Features**
 - Fast Performance: Optimized with C++ and x64 assembly, Shookay ensures rapid search results even with large datasets.
@@ -204,7 +204,7 @@ var es = new ShookayWrapper<Person>(lista, PersonDataExtractor);
 And you are ready to go. Now, you are looking for an object that has number 26 in it :
 
 ```cs
- var results =await es.FindExact("26");
+var results =await es.FindExact("26");
 ```
 
 And the results:
@@ -214,6 +214,35 @@ ID:2, Name:John Surname:Smith
 ```
 
 Voila!
+
+## Usage with GUI
+
+First create a method that matches the following delegate :
+
+```cs
+public delegate void ProgressCallback(int progress);
+```
+
+for example
+
+```cs
+public static void PrintProgress(int progress)
+{
+    Console.WriteLine($"Progress: {progress}%");
+}
+```
+
+Then deliver your objects 
+
+```cs
+await es.DeliverEntriesReportProgress(PrintProgress);
+```
+
+Result:
+```
+Progress: 0%
+Progress: 50%
+```
 
 ## **License**
 
@@ -233,3 +262,9 @@ The MIT License is a permissive license that is short and to the point. It lets 
 - Limitations
 - No Liability
 - No Warranty
+
+### What's new:
+
+[0.5.1] - 2024-01-09
+added:
+ DeliverEntriesWithCallback methods that can report progress to your GUI
