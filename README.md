@@ -74,7 +74,7 @@ Now fill them with some data:
      streetname = "elm street",
      streetNumber = 2
  };
- var person = new Person
+ var person1 = new Person
  {
      Id = 1,
      Name = "Jan",
@@ -102,7 +102,7 @@ Now fill them with some data:
      Addresses = [adr3, adr4]
  };
 
- List<Person> lista = new List<Person>{person,person2};
+ List<Person> lista = new List<Person>{person1,person2};
 ```
 
 Now create the instance of the engine:
@@ -118,3 +118,118 @@ await es.DeliverEntries();
 ```
 
 That's it, search engine is ready. 
+
+If you are looking for an object that has string "Jan" in it :
+
+```cs
+   var results =await es.FindExact("Jan");
+   foreach (var result in results)
+   {
+       var person = lista.First(p => p.Id == result);
+       Console.WriteLine($"ID:{person.Id}, Name:{person.Name} Surname:{person.Surname}");
+   }
+```
+
+Results will be 
+
+```
+ID:1, Name:Jan Surname:Kowalski
+```
+
+You may be also looking for an object that has string "str" being part of words within:
+
+```cs
+var results =await es.FindWithin("str");
+foreach (var result in results)
+{
+    var person = lista.First(p => p.Id == result);
+    Console.WriteLine($"ID:{person.Id}, Name:{person.Name} Surname:{person.Surname}");
+}
+```
+
+Results will be 
+
+```
+ID:1, Name:Jan Surname:Kowalski
+ID:2, Name:John Surname:Smith
+```
+
+**Customization**
+
+ShookayNET scans your objects and extracts all the string properties associated with your objects. This may be insufficient or may deliver too many results. For instance, let's say that in our example you want to include street number to be searchable. As this propert is integer, it will not be automatically counted as text. You will need to write your own object parser and deliver it to the engine.
+
+Object parser must match the following criteria :
+
+```cs
+public KeyValuePair<int, string> ObjectToEntry(T obj)
+```
+
+So for the above example you will create the following method:
+
+```cs
+ public static KeyValuePair<int, string> PersonDataExtractor(Person person)
+ {
+     StringBuilder retString = new StringBuilder();
+     retString.Append(person.Name);
+     addSpace();
+     retString.Append(person.Surname);
+     addSpace();                      
+     foreach (var item in person.Addresses)
+     {
+         retString.Append(item.streetname);
+         addSpace();
+         retString.Append(item.streetNumber);
+         addSpace();
+     }
+     return new KeyValuePair<int, string> (person.Id,retString.ToString());
+     void addSpace()
+     {
+         retString.Append(' ');
+     }
+ }
+```
+
+Above method will include street number. This method will generate the following string for object person1:
+
+```
+Jan Kowalski main street 2 elm street 2
+```
+
+You will have to iinform the search engine that it should your object processor when creating its instance:
+
+```cs
+var es = new ShookayWrapper<Person>(lista, PersonDataExtractor);
+```
+
+And you are ready to go. Now, you are looking for an object that has number 26 in it :
+
+```cs
+ var results =await es.FindExact("26");
+```
+
+And the results:
+
+```
+ID:2, Name:John Surname:Smith
+```
+
+Voila!
+
+## **License**
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+### MIT License Summary
+
+The MIT License is a permissive license that is short and to the point. It lets people do anything they want with your code as long as they provide attribution back to you and don’t hold you liable.
+
+- Permissions
+- Commercial use
+- Modification
+- Distribution
+- Private use
+- Conditions
+- Include the original license and copyright notice with the code
+- Limitations
+- No Liability
+- No Warranty
