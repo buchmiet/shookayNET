@@ -19,6 +19,17 @@ namespace shookayNET
         public static partial IntPtr FindWithinUTF16(IntPtr searchEngine, IntPtr wyrazenie, out int length);
         [LibraryImport("shookay")]
         public static partial IntPtr FindExactUTF16(IntPtr searchEngine, IntPtr wyrazenie, out int length);
+ 
+        [LibraryImport("shookay")]
+        public static partial void DeliverEntriesUTF16WithCallback(IntPtr engine, IntPtr dataPointer, int length, Commons.ProgressCallback progressCallback);
+
+
+    }
+
+    public static class Commons
+    {
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void ProgressCallback(int progress);
     }
 
 
@@ -29,6 +40,8 @@ namespace shookayNET
         private readonly IntPtr _searchEngine;
         public delegate KeyValuePair<int, string> ObjectToEntry(T obj);
         private readonly string _idColumnName;
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void ProgressCallback(int progress);
 
         public ShookayWrapper(List<T> objects, ObjectToEntry? delegateMethod=null,string? idColumnName=null)            
         {
@@ -70,6 +83,64 @@ namespace shookayNET
                 }
             });
         }
+
+        public async Task DeliverEntriesReportProgress(Commons.ProgressCallback progressCallback)
+        {
+            _delegateMethod ??= InternalExtractor;
+
+            await Task.Run(() =>
+            {
+
+                var entries = new Dictionary<int, string>();
+                foreach (var item in _objects)
+                {
+                    var ret = _delegateMethod(item);
+                    entries.Add(ret.Key, ret.Value);
+                }
+
+
+                byte[] dane = EncodeDictionaryToBinary(entries);
+                GCHandle gch = GCHandle.Alloc(dane, GCHandleType.Pinned);
+                try
+                {
+                  
+                    ExternalMethods.DeliverEntriesUTF16WithCallback(_searchEngine, gch.AddrOfPinnedObject(), dane.Length,progressCallback);
+                }
+                finally
+                {
+                    gch.Free();
+                }
+            });
+        }
+
+        public void DeliverEntriesReportProgressSync(Commons.ProgressCallback progressCallback)
+        {
+            _delegateMethod ??= InternalExtractor;
+
+          
+
+                var entries = new Dictionary<int, string>();
+                foreach (var item in _objects)
+                {
+                    var ret = _delegateMethod(item);
+                    entries.Add(ret.Key, ret.Value);
+                }
+
+
+                byte[] dane = EncodeDictionaryToBinary(entries);
+                GCHandle gch = GCHandle.Alloc(dane, GCHandleType.Pinned);
+                try
+                {
+
+                    ExternalMethods.DeliverEntriesUTF16WithCallback(_searchEngine, gch.AddrOfPinnedObject(), dane.Length, progressCallback);
+                }
+                finally
+                {
+                    gch.Free();
+                }
+          
+        }
+
 
         private static byte[] EncodeDictionaryToBinary(Dictionary<int, string> map)
         {
