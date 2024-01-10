@@ -22,7 +22,10 @@ namespace shookayNET
  
         [LibraryImport("shookay")]
         public static partial void DeliverEntriesUTF16WithCallback(IntPtr engine, IntPtr dataPointer, int length, Commons.ProgressCallback progressCallback);
-
+        [LibraryImport("shookay")]
+        public static partial void FindExactUTF16WithCallback(IntPtr engine, IntPtr dataPointer, Commons.ProgressCallback progressCallback);
+        [LibraryImport("shookay")]
+        public static partial void FindWithinUTF16WithCallBack(IntPtr engine, IntPtr dataPointer, Commons.ProgressCallback progressCallback);
 
     }
 
@@ -90,15 +93,12 @@ namespace shookayNET
 
             await Task.Run(() =>
             {
-
                 var entries = new Dictionary<int, string>();
                 foreach (var item in _objects)
                 {
                     var ret = _delegateMethod(item);
                     entries.Add(ret.Key, ret.Value);
                 }
-
-
                 byte[] dane = EncodeDictionaryToBinary(entries);
                 GCHandle gch = GCHandle.Alloc(dane, GCHandleType.Pinned);
                 try
@@ -113,35 +113,7 @@ namespace shookayNET
             });
         }
 
-        public void DeliverEntriesReportProgressSync(Commons.ProgressCallback progressCallback)
-        {
-            _delegateMethod ??= InternalExtractor;
-
-          
-
-                var entries = new Dictionary<int, string>();
-                foreach (var item in _objects)
-                {
-                    var ret = _delegateMethod(item);
-                    entries.Add(ret.Key, ret.Value);
-                }
-
-
-                byte[] dane = EncodeDictionaryToBinary(entries);
-                GCHandle gch = GCHandle.Alloc(dane, GCHandleType.Pinned);
-                try
-                {
-
-                    ExternalMethods.DeliverEntriesUTF16WithCallback(_searchEngine, gch.AddrOfPinnedObject(), dane.Length, progressCallback);
-                }
-                finally
-                {
-                    gch.Free();
-                }
-          
-        }
-
-
+        
         private static byte[] EncodeDictionaryToBinary(Dictionary<int, string> map)
         {
             using var memoryStream = new MemoryStream();
@@ -187,6 +159,26 @@ namespace shookayNET
             });
         }
 
+        public async Task FindWithinWithProgress(string wyrazenie,Commons.ProgressCallback progressCallback)
+        {
+            await Task.Run(() =>
+            {
+                int length;
+                var utf16Bytes = Encoding.Unicode.GetBytes(wyrazenie + "\0");
+                IntPtr resultsPtr;
+                GCHandle gch = GCHandle.Alloc(utf16Bytes, GCHandleType.Pinned);
+                try
+                {
+                    ExternalMethods.FindWithinUTF16WithCallBack(_searchEngine, gch.AddrOfPinnedObject(), progressCallback);
+                }
+                finally
+                {
+                    gch.Free();
+                }              
+            });
+        }
+
+
         public async Task<int[]> FindExact(string wyrazenie)
         {
             return await Task.Run(() =>
@@ -211,6 +203,24 @@ namespace shookayNET
             });
         }
 
-      
+        public async Task FindExactWithProgress(string wyrazenie, Commons.ProgressCallback progressCallback)
+        {
+            await Task.Run(() =>
+            {
+                int length;
+                var utf16Bytes = Encoding.Unicode.GetBytes(wyrazenie + "\0");
+                IntPtr resultsPtr;
+                GCHandle gch = GCHandle.Alloc(utf16Bytes, GCHandleType.Pinned);
+                try
+                {
+                    ExternalMethods.FindExactUTF16WithCallback(_searchEngine, gch.AddrOfPinnedObject(), progressCallback);
+                }
+                finally
+                {
+                    gch.Free();
+                }
+            });
+        }
+
     }
 }
