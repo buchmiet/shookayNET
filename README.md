@@ -1,4 +1,4 @@
-# **Shookay Search Engine NET wrapper v0.5.1**
+# **Shookay Search Engine NET wrapper v0.5.2**
 
 ## **Overview**
 ShookayNET is net wrapper for Shookay engine. Shookay is a open source versatile, high-performance search engine library designed to offer efficient and dynamic search capabilities. Shookay NET enables you tyou use shookay with NET objects. It can be used for web api where results need to be provided instantly or it can provide results on the go.
@@ -223,14 +223,24 @@ First create a method that matches the following delegate :
 public delegate void ProgressCallback(int progress);
 ```
 
-for example
+To deliver your entries :
 
 ```cs
-public static void PrintProgress(int progress)
+public static void PrintResults(int progress)
 {
-    Console.WriteLine($"Progress: {progress}%");
+      Console.WriteLine($"match at: {progress}%");
 }
 ```
+
+To see search results on the go :
+
+```cs
+public static void PrintResults(int recordid)
+{
+    Console.WriteLine($"match at: {recordid}");
+}
+```
+
 
 Then deliver your objects 
 
@@ -243,6 +253,31 @@ Result:
 Progress: 0%
 Progress: 50%
 ```
+
+#To get results of records where search term can be a substring of a word :
+
+```cs
+await es.FindWithinWithProgress("str", PrintResults);
+```
+
+Result:
+```
+match at: 1
+match at: 2
+```
+
+#To get results of records where search term can be a be a exact match in the record :
+
+```cs
+await es.FindExactWithProgress("street", PrintResults);
+```
+
+Result:
+```
+match at: 1
+match at: 2
+```
+
 
 ## **License**
 
@@ -265,6 +300,9 @@ The MIT License is a permissive license that is short and to the point. It lets 
 
 ### What's new:
 
-[0.5.1] - 2024-01-09
+# [0.5.1] - 2024-01-09
 added:
- DeliverEntriesWithCallback methods that can report progress to your GUI
+ ```DeliverEntriesWithCallback``` methods that can report progress to your GUI
+# [0.5.2] - 2024-01-10
+added:
+ ```FindExactWithProgress``` and ```FindWithinWithProgress``` methods that can report progress to your GUI
