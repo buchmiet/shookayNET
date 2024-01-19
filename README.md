@@ -1,14 +1,11 @@
 # **Shookay Search Engine NET wrapper v0.5.2**
 
 ## **Overview**
-ShookayNET is net wrapper for Shookay engine. Shookay is a open source versatile, high-performance search engine library designed to offer efficient and dynamic search capabilities. Shookay NET enables you tyou use shookay with NET objects. It can be used for web api where results need to be provided instantly or it can provide results on the go.
+ShookayNET is net wrapper for Shookay engine. Shookay is a open source high-performance search engine library designed to offer efficient and dynamic search capabilities. Shookay NET enables you to use shookay with NET classes.
 
 ## **Features**
-- Fast Performance: Optimized with C++ and x64 assembly, Shookay ensures rapid search results even with large datasets.
-- Flexible Search Options: Offers both 'FindWithin' and 'FindExact' search methods to cater to different search requirements.
-- Multilingual Support: Compatible with UTF-8, UTF-16, and UTF-32 encoding, providing versatility for international applications.
-- Dynamic Search Capabilities: Allows for searching by partial word fragments and associated terms, enhancing user experience.
-- Separate Search Engine Instances: Each application component can utilize its own instance of the search engine for specialized data handling.
+- Fast Performance: shookay is based on Inverted Search algorithm;
+- You can integrate it with your NET application and use your C# classes to search through;
 
 ## **Installation and Integration**
 
@@ -44,65 +41,142 @@ to your project
 Let's assume you have the following objects:
 
 ```cs
-  public class Address
-  {
-      public int Id { get; set; }
-      public string streetname { get; set; }
-      public int streetNumber { get; set; }
-  }
+   public class Address
+        {
+            public int Id { get; set; }
+            public string streetname { get; set; }
+            public int streetNumber { get; set; }
+        }
 
-  public class Person
-  {
-      public int Id { get; set; }
-      public string Name { get; set; }
-      public string Surname { get; set; }
-      public List<Address> Addresses { get; set; }
-  }
+        public class Car
+        {
+            public int Id { get; set; }
+            public string brand { get; set; }
+            public string model { get; set; }
+            public int year { get; set; }
+        }
+
+
+        public class Person
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public string Surname { get; set; }
+            public List<Address> Addresses { get; set; }
+            public List<Car> Cars { get; set; }
+        }
 ```
 
 Now fill them with some data:
 ```cs
- var adr1 = new Address
- {
-     Id = 2,
-     streetname = "main street",
-     streetNumber = 2
- };
- var adr2 = new Address
- {
-     Id = 2,
-     streetname = "elm street",
-     streetNumber = 2
- };
- var person1 = new Person
- {
-     Id = 1,
-     Name = "Jan",
-     Surname = "Kowalski",
-     Addresses= [adr1, adr2]
- };
+   var car1 = new Car
+            {
+                Id = 1,
+                brand = "Ford",
+                model = "Fiesta",
+                year = 1997
+            };
+            var car2 = new Car
+            {
+                Id = 2,
+                brand = "Mercedez",
+                model = "A200",
+                year = 1980
+            };
+            var car3 = new Car
+            {
+                Id = 3,
+                brand = "Toyota",
+                model = "Camry",
+                year = 2010
+            };
+            var car4 = new Car
+            {
+                Id = 4,
+                brand = "Renault",
+                model = "Megane",
+                year = 2008
+            };
+            var car5 = new Car
+            {
+                Id = 5,
+                brand = "Opel",
+                model = "Astra",
+                year = 2015
+            };
+            var car6 = new Car
+            {
+                Id = 6,
+                brand = "Opel",
+                model = "Astra",
+                year = 2015
+            };
 
- var adr3 = new Address
- {
-     Id = 3,
-     streetname = "lorne street",
-     streetNumber = 2
- };
- var adr4 = new Address
- {
-     Id = 4,
-     streetname = "central street",
-     streetNumber = 26
- };
- var person2 = new Person
- {
-     Id = 2,
-     Name = "John",
-     Surname = "Smith",
-     Addresses = [adr3, adr4]
- };
+            var adr1 = new Address
+            {
+                Id = 1,
+                streetname = "main street",
+                streetNumber = 2
+            };
+            var adr2 = new Address
+            {
+                Id = 2,
+                streetname = "elm street",
+                streetNumber = 23
+            };
+            var adr3 = new Address
+            {
+                Id = 3,
+                streetname = "ulica Lotników",
+                streetNumber = 4
+            };
+            var adr4 = new Address
+            {
+                Id = 4,
+                streetname = "Bahnhofstraße",
+                streetNumber = 17
+            };
+            var adr5 = new Address
+            {
+                Id = 5,
+                streetname = "Carrer del Dr. Vicente Pallarés",
+                streetNumber = 46
+            };
 
- List<Person> lista = new List<Person>{person1,person2};
+            var person1 = new Person
+            {
+                Id = 1,
+                Name = "Jan",
+                Surname = "Kowalski",
+                Addresses= [adr1, adr3],
+                Cars = [car3,car1]
+                
+            };
+            var person2 = new Person
+            {
+                Id = 2,
+                Name = "John",
+                Surname = "Smith",
+                Addresses = [adr2],
+                Cars = [car1,car4]
+            };
+            var person3 = new Person
+            {
+                Id = 3,
+                Name = "Jürgen",
+                Surname = "Schmidt",
+                Addresses = [adr4,adr5],
+                Cars = [car6,car2]
+            };
+            var person4 = new Person
+            {
+                Id = 4,
+                Name = "Juan",
+                Surname = "Herrero",
+                Addresses = [adr2, adr5],
+                Cars = [car2, car3,car5]
+            };
+            List<Person> lista = [person1,person2,person3,person4];
 ```
 
 Now create the instance of the engine:
@@ -152,11 +226,13 @@ Results will be
 ```
 ID:1, Name:Jan Surname:Kowalski
 ID:2, Name:John Surname:Smith
+ID:3, Name:Jürgen Surname:Schmidt
+ID:4, Name:Juan Surname:Herrero
 ```
 
 **Customization**
 
-ShookayNET scans your objects and extracts all the string properties associated with your objects. This may be insufficient or may deliver too many results. For instance, let's say that in our example you want to include street number to be searchable. As this propert is integer, it will not be automatically counted as text. You will need to write your own object parser and deliver it to the engine.
+ShookayNET scans your objects and extracts all the string properties associated with your objects. This may be insufficient or may deliver too many results. For instance, let's say that in our example you want to car year to be searchable. As this propert is integer, it will not be automatically counted as text. You will need to write your own object parser and deliver it to the engine.
 
 Object parser must match the following criteria :
 
@@ -167,49 +243,60 @@ public KeyValuePair<int, string> ObjectToEntry(T obj)
 So for the above example you will create the following method:
 
 ```cs
- public static KeyValuePair<int, string> PersonDataExtractor(Person person)
- {
-     StringBuilder retString = new StringBuilder();
-     retString.Append(person.Name);
-     addSpace();
-     retString.Append(person.Surname);
-     addSpace();                      
-     foreach (var item in person.Addresses)
-     {
-         retString.Append(item.streetname);
-         addSpace();
-         retString.Append(item.streetNumber);
-         addSpace();
-     }
-     return new KeyValuePair<int, string> (person.Id,retString.ToString());
-     void addSpace()
-     {
-         retString.Append(' ');
-     }
- }
+  public static KeyValuePair<int, string> PersonDataExtractor(Person person)
+        {
+            StringBuilder retString = new StringBuilder();
+            retString.Append(person.Name);
+            addSpace();
+            retString.Append(person.Surname);
+            addSpace();                      
+            foreach (var item in person.Addresses)
+            {
+                retString.Append(item.streetname);
+                addSpace();
+                retString.Append(item.streetNumber);
+                addSpace();
+            }
+            foreach (var item in person.Cars)
+            {
+                retString.Append(item.model);
+                addSpace();
+                retString.Append(item.brand);
+                addSpace();
+                retString.Append(item.year);
+                addSpace();
+            }
+
+            return new KeyValuePair<int, string> (person.Id,retString.ToString());
+            void addSpace()
+            {
+                retString.Append(' ');
+            }
+        }
 ```
 
-Above method will include street number. This method will generate the following string for object person1:
+Above method will include both street number and car's year pf manufacture. This method will generate the following string for object person1:
 
 ```
-Jan Kowalski main street 2 elm street 2
+Jan Kowalski main street 2 ulica Lotników 4 Camry Toyota 2010 Fiesta Ford 1997
 ```
 
-You will have to iinform the search engine that it should your object processor when creating its instance:
+You will have to inform the search engine that it should your object processor when creating its instance:
 
 ```cs
 var es = new ShookayWrapper<Person>(lista, PersonDataExtractor);
 ```
 
-And you are ready to go. Now, you are looking for an object that has number 26 in it :
+And you are ready to go. Now, you are looking for a person that has a car manufactured in 1997:
 
 ```cs
-var results =await es.FindExact("26");
+var results =await es.FindExact("1997");
 ```
 
 And the results:
 
 ```
+ID:1, Name:Jan Surname:Kowalski
 ID:2, Name:John Surname:Smith
 ```
 
@@ -220,7 +307,7 @@ Voila!
 First create a method that matches the following delegate :
 
 ```cs
-public delegate void ProgressCallback(int progress);
+ public delegate void ProgressCallback(float progress);
 ```
 
 To deliver your entries :
@@ -229,15 +316,6 @@ To deliver your entries :
 public static void PrintResults(int progress)
 {
       Console.WriteLine($"match at: {progress}%");
-}
-```
-
-To see search results on the go :
-
-```cs
-public static void PrintResults(int recordid)
-{
-    Console.WriteLine($"match at: {recordid}");
 }
 ```
 
@@ -252,30 +330,6 @@ Result:
 ```
 Progress: 0%
 Progress: 50%
-```
-
-#To get results of records where search term can be a substring of a word :
-
-```cs
-await es.FindWithinWithProgress("str", PrintResults);
-```
-
-Result:
-```
-match at: 1
-match at: 2
-```
-
-#To get results of records where search term can be a be a exact match in the record :
-
-```cs
-await es.FindExactWithProgress("street", PrintResults);
-```
-
-Result:
-```
-match at: 1
-match at: 2
 ```
 
 

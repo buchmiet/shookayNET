@@ -4,35 +4,39 @@ using System.Text;
 
 namespace shookayNET
 {
+    enum EncodingType
+    {
+        UTF8,
+        UTF16,
+        UTF32
+    };
 
-
+    enum WordMatchMethod
+    {
+        Exact,
+        Within
+    };
 
     internal static partial  class ExternalMethods
     {
         [LibraryImport("shookay")]     
         public static partial IntPtr CreateSearchEngine();
+       
+        [LibraryImport("shookay")]
+        public static partial IntPtr FindUTF16 (IntPtr engine, IntPtr wyrazenie, out int length, WordMatchMethod method);
 
         [LibraryImport("shookay")]
-        public static partial void DeliverEntriesUTF16(IntPtr engine, IntPtr dataPointer, int length);
+        public static partial void DeliverEntriesWithCallback(IntPtr engine, IntPtr dataPointer, EncodingType encodingType, Commons.ProgressCallback progressCallback);        
 
         [LibraryImport("shookay")]
-        public static partial IntPtr FindWithinUTF16(IntPtr searchEngine, IntPtr wyrazenie, out int length);
-        [LibraryImport("shookay")]
-        public static partial IntPtr FindExactUTF16(IntPtr searchEngine, IntPtr wyrazenie, out int length);
- 
-        [LibraryImport("shookay")]
-        public static partial void DeliverEntriesUTF16WithCallback(IntPtr engine, IntPtr dataPointer, int length, Commons.ProgressCallback progressCallback);
-        [LibraryImport("shookay")]
-        public static partial void FindExactUTF16WithCallback(IntPtr engine, IntPtr dataPointer, Commons.ProgressCallback progressCallback);
-        [LibraryImport("shookay")]
-        public static partial void FindWithinUTF16WithCallBack(IntPtr engine, IntPtr dataPointer, Commons.ProgressCallback progressCallback);
+        public static partial void DeliverEntries(IntPtr engine, IntPtr dataPointer,  EncodingType encodingType);
 
     }
 
     public static class Commons
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void ProgressCallback(int progress);
+        public delegate void ProgressCallback(float progress);
     }
 
 
@@ -53,13 +57,17 @@ namespace shookayNET
             _idColumnName = idColumnName;
             _searchEngine = ExternalMethods.CreateSearchEngine();
         }
+
+        
+
        
         internal KeyValuePair<int, string> InternalExtractor(T obj)
         {
             return Extractor.WordExtractor(obj,_idColumnName);
         }
 
-        public async Task DeliverEntries()
+
+        public async Task PrepareEntries()
         {
             _delegateMethod ??= InternalExtractor;
 
@@ -78,7 +86,7 @@ namespace shookayNET
                 GCHandle gch = GCHandle.Alloc(dane, GCHandleType.Pinned);
                 try
                 {
-                    ExternalMethods.DeliverEntriesUTF16(_searchEngine, gch.AddrOfPinnedObject(), dane.Length);
+                    ExternalMethods.DeliverEntries(_searchEngine, gch.AddrOfPinnedObject(),  EncodingType.UTF16);
                 }
                 finally
                 {
@@ -87,6 +95,7 @@ namespace shookayNET
             });
         }
 
+     
         public async Task DeliverEntriesReportProgress(Commons.ProgressCallback progressCallback)
         {
             _delegateMethod ??= InternalExtractor;
@@ -104,7 +113,7 @@ namespace shookayNET
                 try
                 {
                   
-                    ExternalMethods.DeliverEntriesUTF16WithCallback(_searchEngine, gch.AddrOfPinnedObject(), dane.Length,progressCallback);
+                    ExternalMethods.DeliverEntriesWithCallback(_searchEngine, gch.AddrOfPinnedObject(), EncodingType.UTF16 ,progressCallback);
                 }
                 finally
                 {
@@ -145,7 +154,7 @@ namespace shookayNET
                 GCHandle gch = GCHandle.Alloc(utf16Bytes, GCHandleType.Pinned);
                 try
                 {
-                    resultsPtr = ExternalMethods.FindWithinUTF16(_searchEngine, gch.AddrOfPinnedObject(), out length);
+                    resultsPtr = ExternalMethods.FindUTF16(_searchEngine, gch.AddrOfPinnedObject(), out length, WordMatchMethod.Within);
                 }
                 finally
                 {
@@ -158,26 +167,6 @@ namespace shookayNET
                 return results;
             });
         }
-
-        public async Task FindWithinWithProgress(string wyrazenie,Commons.ProgressCallback progressCallback)
-        {
-            await Task.Run(() =>
-            {
-                int length;
-                var utf16Bytes = Encoding.Unicode.GetBytes(wyrazenie + "\0");
-                IntPtr resultsPtr;
-                GCHandle gch = GCHandle.Alloc(utf16Bytes, GCHandleType.Pinned);
-                try
-                {
-                    ExternalMethods.FindWithinUTF16WithCallBack(_searchEngine, gch.AddrOfPinnedObject(), progressCallback);
-                }
-                finally
-                {
-                    gch.Free();
-                }              
-            });
-        }
-
 
         public async Task<int[]> FindExact(string wyrazenie)
         {
@@ -189,7 +178,7 @@ namespace shookayNET
                 GCHandle gch = GCHandle.Alloc(utf16Bytes, GCHandleType.Pinned);
                 try
                 {
-                    resultsPtr = ExternalMethods.FindExactUTF16(_searchEngine, gch.AddrOfPinnedObject(), out length);
+                    resultsPtr = ExternalMethods.FindUTF16(_searchEngine, gch.AddrOfPinnedObject(), out length, WordMatchMethod.Exact);
                 }
                 finally
                 {
@@ -200,25 +189,6 @@ namespace shookayNET
                 Marshal.Copy(resultsPtr, results, 0, length);
                 Marshal.FreeCoTaskMem(resultsPtr);
                 return results;
-            });
-        }
-
-        public async Task FindExactWithProgress(string wyrazenie, Commons.ProgressCallback progressCallback)
-        {
-            await Task.Run(() =>
-            {
-                int length;
-                var utf16Bytes = Encoding.Unicode.GetBytes(wyrazenie + "\0");
-                IntPtr resultsPtr;
-                GCHandle gch = GCHandle.Alloc(utf16Bytes, GCHandleType.Pinned);
-                try
-                {
-                    ExternalMethods.FindExactUTF16WithCallback(_searchEngine, gch.AddrOfPinnedObject(), progressCallback);
-                }
-                finally
-                {
-                    gch.Free();
-                }
             });
         }
 
