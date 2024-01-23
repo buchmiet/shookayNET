@@ -1,4 +1,4 @@
-# **Shookay Search Engine NET wrapper v0.5.2**
+# **Shookay Search Engine NET wrapper v0.6.1**
 
 ## **Overview**
 ShookayNET is net wrapper for Shookay engine. Shookay is a open source high-performance search engine library designed to offer efficient and dynamic search capabilities. Shookay NET enables you to use shookay with NET classes.
@@ -302,6 +302,25 @@ ID:2, Name:John Surname:Smith
 
 Voila!
 
+
+#Adding new entries :
+
+```cs
+var person5 = new Person
+{
+    Id = 4,
+    Name = "Ian",
+    Surname = "Black",
+    Addresses = [adr1, adr5],
+    Cars = [car5]
+}
+await es.AddEntry(person5);
+```
+
+
+Object will be parsed and added to your dictionary
+
+
 ## Usage with GUI
 
 First create a method that matches the following delegate :
@@ -360,3 +379,7 @@ added:
 # [0.5.2] - 2024-01-10
 added:
  ```FindExactWithProgress``` and ```FindWithinWithProgress``` methods that can report progress to your GUI
+# [0.6.1] - 2024-01-19
+Major breaking changes to the API
+# [0.6.2] - 2024-01-23
+Added AddEntry Method

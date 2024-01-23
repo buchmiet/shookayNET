@@ -26,6 +26,9 @@ namespace shookayNET
         public static partial IntPtr FindUTF16 (IntPtr engine, IntPtr wyrazenie, out int length, WordMatchMethod method);
 
         [LibraryImport("shookay")]
+        public static partial IntPtr AddEntryUTF16(IntPtr engine,int id, IntPtr wyrazenie);
+
+        [LibraryImport("shookay")]
         public static partial void DeliverEntriesWithCallback(IntPtr engine, IntPtr dataPointer, EncodingType encodingType, Commons.ProgressCallback progressCallback);        
 
         [LibraryImport("shookay")]
@@ -66,6 +69,7 @@ namespace shookayNET
             return Extractor.WordExtractor(obj,_idColumnName);
         }
 
+     
 
         public async Task PrepareEntries()
         {
@@ -143,6 +147,46 @@ namespace shookayNET
                 }            
             return memoryStream.ToArray();
         }
+
+        public async Task AddEntry(int id, string entry)
+        {
+            await Task.Run(() =>
+            {
+           
+                var utf16Bytes = Encoding.Unicode.GetBytes(entry + "\0");
+                IntPtr resultsPtr;
+                GCHandle gch = GCHandle.Alloc(utf16Bytes, GCHandleType.Pinned);
+                try
+                {
+                    resultsPtr = ExternalMethods.AddEntryUTF16(_searchEngine,id, gch.AddrOfPinnedObject());
+                }
+                finally
+                {
+                    gch.Free();
+                }             
+            });
+        }
+
+        public async Task AddEntry(T obj)
+        {
+
+            await Task.Run(() =>
+            {
+                var ret = _delegateMethod(obj);
+                var utf16Bytes = Encoding.Unicode.GetBytes(ret.Value + "\0");
+                IntPtr resultsPtr;
+                GCHandle gch = GCHandle.Alloc(utf16Bytes, GCHandleType.Pinned);
+                try
+                {
+                    resultsPtr = ExternalMethods.AddEntryUTF16(_searchEngine, ret.Key, gch.AddrOfPinnedObject());
+                }
+                finally
+                {
+                    gch.Free();
+                }
+            });
+        }
+
 
         public async Task<int[]> FindWithin(string wyrazenie)
         {
