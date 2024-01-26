@@ -21,7 +21,14 @@ namespace shookayNET
     {
         [LibraryImport("shookay")]     
         public static partial IntPtr CreateSearchEngine();
-       
+
+        [LibraryImport("shookay")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        public static partial bool RemoveEntry(IntPtr engine, int id);
+        [LibraryImport("shookay")]
+        [return: MarshalAs(UnmanagedType.I1)]
+        public static partial bool RefreshEntryUTF16(IntPtr engine, int id, IntPtr wyrazenie);
+
         [LibraryImport("shookay")]
         public static partial IntPtr FindUTF16 (IntPtr engine, IntPtr wyrazenie, out int length, WordMatchMethod method);
 
@@ -147,6 +154,38 @@ namespace shookayNET
                 }            
             return memoryStream.ToArray();
         }
+
+        public async Task<bool> RemoveEntry(int id)
+        {
+            bool result=false;
+            await Task.Run(() =>
+            {         
+                 result = ExternalMethods.RemoveEntry(_searchEngine, id);
+            });
+            return result;
+        }
+
+        public async Task<bool> RefreshEntry(int id, string entry)
+        {
+            bool result = false;
+            await Task.Run(() =>
+            {
+
+                var utf16Bytes = Encoding.Unicode.GetBytes(entry + "\0");
+                IntPtr resultsPtr;
+                GCHandle gch = GCHandle.Alloc(utf16Bytes, GCHandleType.Pinned);
+                try
+                {
+                    result = ExternalMethods.RefreshEntryUTF16(_searchEngine, id, gch.AddrOfPinnedObject());
+                }
+                finally
+                {
+                    gch.Free();
+                }
+            });
+            return result;
+        }
+
 
         public async Task AddEntry(int id, string entry)
         {

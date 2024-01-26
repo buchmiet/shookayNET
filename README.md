@@ -1,4 +1,4 @@
-# **Shookay Search Engine NET wrapper v0.6.2**
+# **Shookay Search Engine NET wrapper v0.6.3**
 
 ## **Overview**
 ShookayNET is net wrapper for Shookay engine. Shookay is a open source high-performance search engine library designed to offer efficient and dynamic search capabilities. Shookay NET enables you to use shookay with NET classes.
@@ -321,6 +321,28 @@ await es.AddEntry(person5);
 Object will be parsed and added to your dictionary
 
 
+#Removing entries :
+
+```cs
+bool result=await es.RemoveEntry(obj.Id);  // where obj.Id is the Id of the record to remove
+```
+
+returns true if object was removed successfully
+
+#Updating entries :
+
+```cs
+bool result = await search7.RefreshEntry(obj); // where obj is the record that needs to be updated
+```
+
+or 
+
+```cs
+bool result = await search7.RefreshEntry(9,"new text"); // where id is the id of the record and string is new content
+```
+
+returns true if succeded
+
 ## Usage with GUI
 
 First create a method that matches the following delegate :
@@ -383,3 +405,5 @@ added:
 Major breaking changes to the API
 # [0.6.2] - 2024-01-23
 Added AddEntry Method
+# [0.6.3] - 2024-01-23
+Added RemoveEntry and RefreshEntry methods
