@@ -5,16 +5,30 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>NET wrapper for shookay text search engine</Title>
+    <Version>0.6.3.2</Version>
+    <Description>C# wrapper for shookay text search engine. </Description>
+    <Copyright>(c) Lukasz Buchmiet</Copyright>
+    <PackageProjectUrl>https://github.com/buchmiet/shookayNET</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/buchmiet/shookayNET</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>text search engine</PackageTags>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="shookay.dll" />
+ <ItemGroup>
+    <None Include="shookay.dll">
+      <Pack>true</Pack>
+      <PackagePath>lib\net8.0\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="shookay.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

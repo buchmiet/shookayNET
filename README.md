@@ -405,5 +405,5 @@ added:
 Major breaking changes to the API
 # [0.6.2] - 2024-01-23
 Added AddEntry Method
-# [0.6.3] - 2024-01-23
+# [0.6.3] - 2024-01-26
 Added RemoveEntry and RefreshEntry methods

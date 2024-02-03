@@ -186,6 +186,27 @@ namespace shookayNET
             return result;
         }
 
+        public async Task<bool> RefreshEntry(T obj)
+        {
+            bool result = false;
+            await Task.Run(() =>
+            {
+                var entry = _delegateMethod(obj);
+                var utf16Bytes = Encoding.Unicode.GetBytes(entry + "\0");
+                IntPtr resultsPtr;
+                GCHandle gch = GCHandle.Alloc(utf16Bytes, GCHandleType.Pinned);
+                try
+                {
+                    result = ExternalMethods.RefreshEntryUTF16(_searchEngine, id, gch.AddrOfPinnedObject());
+                }
+                finally
+                {
+                    gch.Free();
+                }
+            });
+            return result;
+        }
+
 
         public async Task AddEntry(int id, string entry)
         {
