@@ -210,7 +210,7 @@ namespace shookayNET
                 GCHandle gch = GCHandle.Alloc(utf16Bytes, GCHandleType.Pinned);
                 try
                 {
-                    result = ExternalMethods.RefreshEntryUTF16(_searchEngine, id, gch.AddrOfPinnedObject());
+                    result = ExternalMethods.RefreshEntryUTF16(_searchEngine, entry.Key, gch.AddrOfPinnedObject());
                 }
                 finally
                 {
