@@ -50,7 +50,20 @@ namespace shookayNET
     }
 
 
-    public class ShookayWrapper<T> where T : class
+    public interface IShookayWrapper<T> where T : class
+    {
+        Task PrepareEntries();
+        Task DeliverEntriesReportProgress(Commons.ProgressCallback progressCallback);
+        Task<bool> RemoveEntry(int id);
+        Task<bool> RefreshEntry(int id, string entry);
+        Task<bool> RefreshEntry(T obj);
+        Task AddEntry(int id, string entry);
+        Task AddEntry(T obj);
+        Task<int[]> FindWithin(string wyrazenie);
+        Task<int[]> FindExact(string wyrazenie);
+    }
+
+    public class ShookayWrapper<T> : IShookayWrapper<T> where T : class
     {
         private  ObjectToEntry _delegateMethod;
         private readonly List<T> _objects;

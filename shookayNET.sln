@@ -5,10 +5,6 @@ VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "shookayNET", "shookayNET.csproj", "{2608E44E-0A14-4FBA-8DD8-54DFD200C470}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "shookayNETtester", "..\shookayNETtester\shookayNETtester.csproj", "{458ABD7D-985A-4447-A405-1294D6B35B7E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataServicesNET80", "..\DataServicesNET80\DataServicesNET80.csproj", "{AA5A0A2D-E1D3-40AE-ADD3-3640151BF624}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,22 +21,6 @@ Global
 		{2608E44E-0A14-4FBA-8DD8-54DFD200C470}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2608E44E-0A14-4FBA-8DD8-54DFD200C470}.Release|x64.ActiveCfg = Release|Any CPU
 		{2608E44E-0A14-4FBA-8DD8-54DFD200C470}.Release|x64.Build.0 = Release|Any CPU
-		{458ABD7D-985A-4447-A405-1294D6B35B7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{458ABD7D-985A-4447-A405-1294D6B35B7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{458ABD7D-985A-4447-A405-1294D6B35B7E}.Debug|x64.ActiveCfg = Debug|x64
-		{458ABD7D-985A-4447-A405-1294D6B35B7E}.Debug|x64.Build.0 = Debug|x64
-		{458ABD7D-985A-4447-A405-1294D6B35B7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{458ABD7D-985A-4447-A405-1294D6B35B7E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{458ABD7D-985A-4447-A405-1294D6B35B7E}.Release|x64.ActiveCfg = Release|x64
-		{458ABD7D-985A-4447-A405-1294D6B35B7E}.Release|x64.Build.0 = Release|x64
-		{AA5A0A2D-E1D3-40AE-ADD3-3640151BF624}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AA5A0A2D-E1D3-40AE-ADD3-3640151BF624}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AA5A0A2D-E1D3-40AE-ADD3-3640151BF624}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{AA5A0A2D-E1D3-40AE-ADD3-3640151BF624}.Debug|x64.Build.0 = Debug|Any CPU
-		{AA5A0A2D-E1D3-40AE-ADD3-3640151BF624}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AA5A0A2D-E1D3-40AE-ADD3-3640151BF624}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AA5A0A2D-E1D3-40AE-ADD3-3640151BF624}.Release|x64.ActiveCfg = Release|Any CPU
-		{AA5A0A2D-E1D3-40AE-ADD3-3640151BF624}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
